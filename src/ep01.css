@@ -1,15 +1,39 @@
 h1 {
     color: rgb(0, 0, 0);
     font-size: 30px;
-  }
+}
 
 body {
     width: 250px;
 }
 
-.teclado {
-    font-size: 24px;
+.control {
+    font-size: 20px;
     width: 100px;
     height: 40px;
-    background-color: rgb(255, 237, 40);
+    background-color: rgb(255, 158, 40);
+}
+
+.numKey {
+    width: 60px;
+    height: 60px;
+    font-size: 20px;
+    margin: 5px;
+    background: rgb(255, 255, 255);
+
+}
+
+.numCl {
+    background: rgb(120, 110, 228);
+    color: white;
+    width: 60px;
+    height: 60px;
+    font-size: 20px;
+    margin: 5px;
+}
+
+.displayBar {
+    font-size: 30px;
+    border: 2px solid rgb(0, 0, 0);
+    border-radius: 30px;
 }

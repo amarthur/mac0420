@@ -2,10 +2,10 @@
 <html lang="pt-br">
 
 <head>
-    <meta charset="utf-8">
-    <title>EP01</title>
-    <link rel="stylesheet" href="ep01.css">
-    <script src="ep01.js" defer></script>
+	<meta charset="utf-8">
+	<title>EP01</title>
+	<link rel="stylesheet" href="ep01.css">
+	<script src="ep01.js" defer></script>
 </head>
 
 <body>
@@ -13,16 +13,47 @@
 
 	<hr />
 	<center>
+		<div id="display" class="displayBar">00:00</div>
+		<div id="numericKeyboard">
+			<table>
+				<tr>
+					<td><button class="numKey">7</button></td>
+					<td><button class="numKey">8</button></td>
+					<td><button class="numKey">9</button></td>
+				</tr>
+				<tr>
+					<td><button class="numKey">4</button></td>
+					<td><button class="numKey">5</button></td>
+					<td><button class="numKey">6</button></td>
+				</tr>
+				<tr>
+					<td><button class="numKey">1</button></td>
+					<td><button class="numKey">2</button></td>
+					<td><button class="numKey">3</button></td>
+				</tr>
+				<tr>
+					<td><button class="numCl" id="btDel">Del</button></td>
+					<td><button class="numKey">0</button></td>
+					<td><button class="numCl" id="btClear">Cl</button></td>
+				</tr>
+			</table>
+		</div>
+
+		<hr />
 
 		<h1 id="clock">00 : 00 : 00</h1>
+		<hr />
 
 		<table>
 			<tr>
-				<td><input class='teclado' id="btStart" type="button" size="10" value="Start" />
-    </td>
+				<td><input class="control" id="btStart" type="button" size="10" />
+				</td>
+				<td><input class="control" id="btPause" type="button" size="10" disabled="True"/>
+				</td>
 			</tr>
 		</table>
 		<hr />
 	</center>
 </body>
+
 </html>
