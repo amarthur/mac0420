@@ -23,13 +23,17 @@ body {
 
 }
 
-.numCl {
+.numComm {
     background: rgb(120, 110, 228);
     color: white;
     width: 60px;
     height: 60px;
     font-size: 20px;
     margin: 5px;
+}
+
+.numComm:disabled {
+    opacity: 0.5;
 }
 
 .displayBar {
