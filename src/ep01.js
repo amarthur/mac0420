@@ -62,6 +62,12 @@ var gClockInterface = {
   },
 }
 
+var gTimer = {
+  mm: 0,
+  ss: 0,
+  cs: 0,
+}
+
 var gControlBts = {
   btType: null,
   btStart: null,
@@ -157,7 +163,6 @@ function createNumericKeyboard() {
   gNumericKb.btDel.onclick = () => gDisplay.del();
 }
 
-
 function changeClockValue(cs, ss, mm) {
   gClockInterface.clock.innerText = f2(mm) + " : " + f2(ss) + " : " + f2(cs);
 }
@@ -165,7 +170,6 @@ function changeClockValue(cs, ss, mm) {
 function f2(x) {
   return ("00" + x).slice(-2);
 }
-
 
 /* ==================================================================
     TOGGLE CONTROLS
@@ -187,8 +191,12 @@ function toggleClockState(e) {
     gClockInterface.restartClock();
     gControlBts.toggleStateRunning();
     gDisplay.normalizeDisplayTime();
-    if (btType == TIMER) {
+    if (btType.value == TIMER) {
       changeClockValue(0, gDisplay.ss, gDisplay.mm);
+      gTimer.mm = parseInt(gDisplay.mm);
+      gTimer.ss = parseInt(gDisplay.ss);
+      gTimer.cs = 0;
+      gTimer.startTime = Date.now();
     }
   }
   else {
@@ -232,7 +240,7 @@ function animateChronometer(e) {
   let pauseState = gControlBts.btPause.value;
 
   if (btState == STOP && pauseState != RUN) {
-    let now = Date.now() + gClockInterface.elapsedTime + 58000;
+    let now = Date.now() + gClockInterface.elapsedTime;
     let ms = now - gClockInterface.startTime; // Milliseconds
     let cs = Math.floor(ms / 10) % 100; // Centiseconds
     let ss = Math.floor(ms / 1000) % 60; // Seconds
@@ -258,17 +266,20 @@ function animateTimer() {
   let pauseState = gControlBts.btPause.value;
 
   if (btState == STOP && pauseState != RUN) {
-    let ms = parseInt(gDisplay.mm) * 60000 + parseInt(gDisplay.ss) * 60
+    let totalMs = gTimer.mm * 60000 + gTimer.ss * 1000
 
-    let now = Date.now();
+    let elapsedTime = Date.now() - gClockInterface.startTime + gClockInterface.elapsedTime;
+    let ms = Math.max(0, totalMs - elapsedTime);
     let cs = Math.floor(ms / 10) % 100; // Centiseconds
+    let ss = Math.floor(ms / 1000) % 60; // Seconds
+    let mm = Math.floor(ms / 60000) % 60; // Minutes
 
-    if (mm < gDisplay.mm || (mm == gDisplay.mm && ss < gDisplay.ss)) {
+    if (mm > 0 || (mm == 0 && ss > 0) || (mm == 0 && ss == 0 && cs > 0)) {
       changeClockValue(cs, ss, mm);
-    } else if (mm == gDisplay.mm && ss == gDisplay.ss) {
-      changeClockValue(0, ss, mm);
-      gClockInterface.restartClock();
+    } else if (mm == 0 && ss == 0 && cs == 0) {
+      changeClockValue(cs, ss, mm);
       toggleNumericKeyboard(disabledState = false);
+      gClockInterface.restartClock();
       gControlBts.toggleStateStopped();
     }
 
