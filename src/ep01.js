@@ -7,10 +7,15 @@ window.onload = main;
 */
 
 var DISPLAY_ZERO = "0000"
+
 var START = "Start";
 var STOP = "Stop";
+
 var PAUSE = "| |";
 var RUN = ">";
+
+var CRONO = "Crono";
+var TIMER = "Timer";
 
 var gClockInterface = {
   startTime: 0,
@@ -29,15 +34,25 @@ function main() {
 };
 
 function buildInterface() {
-  gClockInterface.clock = document.getElementById("clock");
-  gClockInterface.btStart = document.getElementById("btStart");
-  gClockInterface.btPause = document.getElementById("btPause");
-  gClockInterface.numericKeyboard = document.getElementById("numericKeyboard");
+  // Time Display
   gClockInterface.display = document.getElementById("display");
+
+  // Numeric Keyboard
+  gClockInterface.numericKeyboard = document.getElementById("numericKeyboard");
   gClockInterface.btClear = document.getElementById("btClear");
   gClockInterface.btDel = document.getElementById("btDel");
 
+  // Clock
+  gClockInterface.clock = document.getElementById("clock");
+
+  // Control Buttons
+  gClockInterface.btType = document.getElementById("btType");
+  gClockInterface.btStart = document.getElementById("btStart");
+  gClockInterface.btPause = document.getElementById("btPause");
+
   createNumericKeyboard();
+  gClockInterface.btClear.onclick = clearNumericKeyboard;
+  gClockInterface.btDel.onclick = delNumericKeyboard;
 
   gClockInterface.btStart.onclick = changeClockState;
   gClockInterface.btStart.value = START;
@@ -45,8 +60,8 @@ function buildInterface() {
   gClockInterface.btPause.onclick = changePauseState;
   gClockInterface.btPause.value = PAUSE;
 
-  gClockInterface.btClear.onclick = clearNumericKeyboard;
-  gClockInterface.btDel.onclick = delNumericKeyboard;
+  // gClockInterface.btPause.onclick = changePauseState;
+  gClockInterface.btType.value = TIMER;
 }
 
 function createNumericKeyboard() {
@@ -73,7 +88,7 @@ function delNumericKeyboard() {
 
 function updateDisplay() {
   let displayText = gClockInterface.displayNum;
-  gClockInterface.display.innerText = displayText.slice(0, 2) + " : " + displayText.slice(2, 4);
+  gClockInterface.display.innerText = displayText.slice(0, 2) + ":" + displayText.slice(2, 4);
 }
 
 function changeClockState(e) {
@@ -82,6 +97,7 @@ function changeClockState(e) {
   if (btState == START) {
     gClockInterface.btStart.value = STOP;
     gClockInterface.btPause.disabled = false;
+    normalizeDisplayTime();
     restartClock();
   }
   else {
@@ -91,6 +107,13 @@ function changeClockState(e) {
   }
 }
 
+function normalizeDisplayTime() {
+  let displayNum = gClockInterface.displayNum
+  let minutesDigits = (parseInt(displayNum[0]) >= 6) ? "59" : displayNum.slice(0, 2);
+  let secondsDigits = (parseInt(displayNum[2]) >= 6) ? "59" : displayNum.slice(2, 4);
+  gClockInterface.displayNum = minutesDigits + secondsDigits;
+  updateDisplay();
+}
 
 function restartClock() {
   gClockInterface.startTime = Date.now();
@@ -111,23 +134,55 @@ function changePauseState(e) {
 }
 
 function animateNewFrame(e) {
+  animateStopwatch();
+}
+
+function animateStopwatch(e) {
   let btState = gClockInterface.btStart.value;
   let pauseState = gClockInterface.btPause.value;
+  let typeState = gClockInterface.btType.value;
 
-  if (btState == STOP && pauseState != RUN) {
-    let now = Date.now() + gClockInterface.elapsedTime;
-    let ms = now - gClockInterface.startTime; // Milliseconds
-    let cs = Math.floor(ms / 10); // Centiseconds
-    let ss = Math.floor(ms / 1000); // Seconds
-    let mm = Math.floor(ss / 60); // Minutes
+  let userTime = gClockInterface.displayNum;
+  let userMinutes = parseInt(userTime.slice(0, 2));
+  let userSeconds = parseInt(userTime.slice(2, 4));
 
-    cs = f2(cs % 100);
-    ss = f2(ss % 60);
-    mm = f2(mm);
+  if (typeState == TIMER) {
+    if (btState == STOP && pauseState != RUN) {
+      let now = Date.now() + gClockInterface.elapsedTime;
+      let ms = now - gClockInterface.startTime; // Milliseconds
+      let cs = Math.floor(ms / 10) % 100; // Centiseconds
+      let ss = Math.floor(ms / 1000) % 60; // Seconds
+      let mm = Math.floor(ss / 60); // Minutes
 
-    gClockInterface.clock.innerText = mm + " : " + ss + " : " + cs;
+      if (mm < userMinutes) {
+        changeStopwatchValue(cs, ss, mm);
+      }
+      else if (mm == userMinutes) {
+        if (ss < userSeconds) {
+          changeStopwatchValue(cs, ss, mm);
+        }
+        else if (ss == userSeconds) {
+          changeStopwatchValue(0, ss, mm);
+          restartClock();
+          gClockInterface.btStart.value = START;
+          gClockInterface.btPause.value = PAUSE;
+          gClockInterface.btPause.disabled = true;
+        }
+      }
+      else {
+        restartClock();
+        gClockInterface.btStart.value = START;
+        gClockInterface.btPause.value = PAUSE;
+        gClockInterface.btPause.disabled = true;
+      }
+    }
+
   }
   window.requestAnimationFrame(animateNewFrame);
+}
+
+function changeStopwatchValue(cs, ss, mm) {
+  gClockInterface.clock.innerText = f2(mm) + " : " + f2(ss) + " : " + f2(cs);
 }
 
 function f2(x) {
