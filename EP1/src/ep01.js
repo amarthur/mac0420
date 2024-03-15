@@ -152,11 +152,19 @@ function createNumericKeyboard() {
     numericKeys[i].onclick = function () { // Append to the left
       gDisplay.num = gDisplay.num.slice(1) + this.innerText;
       updateDisplay();
+      console.log("Botao: " + this.innerText + " " + gDisplay.num);
     }
   }
 
-  gNumericKb.btClear.onclick = () => gDisplay.clear();
-  gNumericKb.btDel.onclick = () => gDisplay.del();
+  gNumericKb.btClear.onclick = () => {
+    gDisplay.clear();
+    console.log("CL: cl " + gDisplay.num);
+  }
+
+  gNumericKb.btDel.onclick = () => {
+    gDisplay.del();
+    console.log("DEL: del " + gDisplay.num);
+  }
 }
 
 function changeClockValue(cs, ss, mm) {
@@ -198,10 +206,12 @@ function toggleClockState(e) {
     gDisplay.normalizeDisplayTime();
     gControlBts.toggleStateRunning();
     toggleNumericKeyboard(disabledState = true);
+    console.log(gControlBts.btType.value + " iniciado.");
   }
   else {
     gControlBts.toggleStateStopped();
     toggleNumericKeyboard(disabledState = false);
+    console.log(gControlBts.btType.value + " finalizado.");
   }
 }
 
@@ -211,16 +221,19 @@ function togglePauseState(e) {
   if (pauseState == RUN) {
     gClock.startTime = Date.now(); // Reset start time
     gControlBts.btPause.value = PAUSE;
+    console.log("Rodando");
   }
   else {
     gClock.elapsedTime += Date.now() - gClock.startTime; // Count elapsed time
     gControlBts.btPause.value = RUN;
+    console.log("Pausado");
   }
 }
 
 function toggleTypeState(e) {
   let typeState = gControlBts.btType.value;
   gControlBts.btType.value = (typeState == TIMER) ? CHRONO : TIMER;
+  console.log("Modo " + gControlBts.btType.value + " habilitado.");
 }
 
 /* ==================================================================
@@ -229,10 +242,7 @@ function toggleTypeState(e) {
 
 function animateNewFrame(e) {
   let typeState = gControlBts.btType.value;
-  if (typeState == CHRONO)
-    animateChronometer();
-  else
-    animateTimer();
+  (typeState == CHRONO) ? animateChronometer() : animateTimer();
 }
 
 function animateChronometer(e) {
