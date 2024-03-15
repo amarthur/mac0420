@@ -163,6 +163,13 @@ function changeClockValue(cs, ss, mm) {
   gClock.clock.innerText = f2(mm) + " : " + f2(ss) + " : " + f2(cs);
 }
 
+function changeClockValueMs(ms) {
+  let cs = toCs(ms);
+  let ss = toSs(ms);
+  let mm = toMm(ms);
+  gClock.clock.innerText = f2(mm) + " : " + f2(ss) + " : " + f2(cs);
+}
+
 function f2(x) {
   return ("00" + x).slice(-2);
 }
@@ -233,20 +240,15 @@ function animateChronometer(e) {
   let pauseState = gControlBts.btPause.value;
 
   if (btState == STOP && pauseState != RUN) {
-    let now = Date.now() + gClock.elapsedTime;
-    let ms = now - gClock.startTime; // Milliseconds
-    let cs = toCs(ms);
-    let ss = toSs(ms);
-    let mm = toMm(ms);
+    let timeElapsedSinceLastStart = Date.now() - gClock.startTime;
+    let totalElapsedTime = timeElapsedSinceLastStart + gClock.elapsedTime;
+    let ms = Math.min(totalElapsedTime, gDisplay.totalMs);
 
     if (ms <= gDisplay.totalMs)
-      changeClockValue(cs, ss, mm);
+      changeClockValueMs(ms);
 
-    if (ms >= gDisplay.totalMs) {
-      changeClockValue(0, ss, mm);
+    if (ms == gDisplay.totalMs)
       gControlBts.btStart.click();
-    }
-
   }
 
   window.requestAnimationFrame(animateNewFrame);
@@ -257,15 +259,12 @@ function animateTimer() {
   let pauseState = gControlBts.btPause.value;
 
   if (btState == STOP && pauseState != RUN) {
-
-    let elapsedTime = Date.now() - gClock.startTime + gClock.elapsedTime;
-    let ms = Math.max(0, gDisplay.totalMs - elapsedTime);
-    let cs = toCs(ms);
-    let ss = toSs(ms);
-    let mm = toMm(ms);
+    let timeElapsedSinceLastStart = Date.now() - gClock.startTime;
+    let totalElapsedTime = timeElapsedSinceLastStart + gClock.elapsedTime;
+    let ms = Math.max(0, gDisplay.totalMs - totalElapsedTime);
 
     if (ms >= 0)
-      changeClockValue(cs, ss, mm);
+      changeClockValueMs(ms);
 
     if (ms == 0)
       gControlBts.btStart.click();
