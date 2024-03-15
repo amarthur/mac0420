@@ -187,14 +187,14 @@ function toggleClockState(e) {
   let btState = gControlBts.btStart.value;
 
   if (btState == START) {
-    toggleNumericKeyboard(disabledState = true);
     gClock.restartClock();
-    gControlBts.toggleStateRunning();
     gDisplay.normalizeDisplayTime();
+    gControlBts.toggleStateRunning();
+    toggleNumericKeyboard(disabledState = true);
   }
   else {
-    toggleNumericKeyboard(disabledState = false);
     gControlBts.toggleStateStopped();
+    toggleNumericKeyboard(disabledState = false);
   }
 }
 
@@ -202,11 +202,11 @@ function togglePauseState(e) {
   let pauseState = gControlBts.btPause.value;
 
   if (pauseState == RUN) {
-    gClock.startTime = Date.now();
+    gClock.startTime = Date.now(); // Reset start time
     gControlBts.btPause.value = PAUSE;
   }
   else {
-    gClock.elapsedTime += Date.now() - gClock.startTime;
+    gClock.elapsedTime += Date.now() - gClock.startTime; // Count elapsed time
     gControlBts.btPause.value = RUN;
   }
 }
@@ -239,14 +239,12 @@ function animateChronometer(e) {
     let ss = toSs(ms);
     let mm = toMm(ms);
 
-    if (mm < gDisplay.mm || (mm == gDisplay.mm && ss < gDisplay.ss)) {
+    if (ms <= gDisplay.totalMs)
       changeClockValue(cs, ss, mm);
-    }
-    else if (mm == gDisplay.mm && ss == gDisplay.ss) {
+
+    if (ms >= gDisplay.totalMs) {
       changeClockValue(0, ss, mm);
-      toggleNumericKeyboard(disabledState = false);
-      gClock.restartClock();
-      gControlBts.toggleStateStopped();
+      gControlBts.btStart.click();
     }
 
   }
@@ -266,15 +264,11 @@ function animateTimer() {
     let ss = toSs(ms);
     let mm = toMm(ms);
 
-    if (mm > 0 || (mm == 0 && ss > 0) || (mm == 0 && ss == 0 && cs > 0)) {
+    if (ms >= 0)
       changeClockValue(cs, ss, mm);
-    } else if (mm == 0 && ss == 0 && cs == 0) {
-      changeClockValue(cs, ss, mm);
-      toggleNumericKeyboard(disabledState = false);
-      gClock.restartClock();
-      gControlBts.toggleStateStopped();
-    }
 
+    if (ms == 0)
+      gControlBts.btStart.click();
   }
 
   window.requestAnimationFrame(animateNewFrame);
