@@ -62,9 +62,7 @@ function main() {
     height = canvas.height;
 
     initializeFish();
-
-    for (const fish of gFishes)
-        moveFish(fish);
+    drawFishes();
 }
 
 function initializeFish() {
@@ -82,21 +80,19 @@ function initializeFish() {
     }
 }
 
-function drawFishes() {
-    for (const fish of gFishes) {
-
-        let fishDrawing = new Path2D();
-        fishDrawing.moveTo(fish.cx + fish.poly[0][0], fish.cy - fish.poly[0][1]);
-        for (let j = 1; j < fish.n; j++) {
-            let fishPosX = fish.cx + fish.poly[j][0];
-            let fishPosY = fish.cy - fish.poly[j][1];
-            fishDrawing.lineTo(fishPosX, fishPosY);
-        }
-        fishDrawing.closePath();
-
-        ctx.fillStyle = fish.color;
-        ctx.fill(fishDrawing);
+function drawFish(fish) {
+    let fishDrawing = new Path2D();
+    fishDrawing.moveTo(fish.poly[0][0], fish.poly[0][1]);
+    for (let j = 1; j < fish.n; j++) {
+        let fishPosX = fish.poly[j][0];
+        let fishPosY = fish.poly[j][1];
+        fishDrawing.lineTo(fishPosX, fishPosY);
     }
+    fishDrawing.closePath();
+
+    ctx.fillStyle = fish.color;
+    ctx.fill(fishDrawing);
+
 }
 
 /**
@@ -136,10 +132,18 @@ function moveFish(fish) {
     if (outsideTopBorder || outsideBottomBorder)
         fish.bounceY();
 
-    ctx.clearRect(0, 0, width, height);
-    drawFishes();
-    requestAnimationFrame(() => { moveFish(fish) });
+    ctx.save();
+    ctx.translate(fish.cx, fish.cy);
+    drawFish(fish);
+    ctx.restore();
 };
+
+function drawFishes() {
+    ctx.clearRect(0, 0, width, height);
+    for (const fish of gFishes)
+        moveFish(fish);
+    requestAnimationFrame(drawFishes);
+}
 
 //==================================================================
 /**
