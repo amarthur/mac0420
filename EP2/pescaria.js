@@ -6,24 +6,9 @@ window.onload = main;
 var ctx;
 var width, height;
 
-class Fish {
-    constructor(n, R, cx, cy, vx, vy) {
-        this.n = n;
-        this.R = R;
-        this.cx = cx;
-        this.cy = cy;
-        this.vx = vx;
-        this.vy = vy;
-        this.color = getRandomColor();
-
-        this.poly = getCircleVertices(n, R);
-    }
-
-    bounceX() { this.vx *= -1; }
-    bounceY() { this.vy *= -1; }
-}
-
 var gFishes;
+
+const SAND_HEIGHT = 0.3;
 
 const MIN_FISH = 10;
 const MAX_FISH = 16;
@@ -40,6 +25,28 @@ const MIN_FISH_Y_VEL = 1;
 const MAX_FISH_Y_VEL = 3;
 
 const NUM_FISH = getRandomInt(MIN_FISH, MAX_FISH);
+
+//==================================================================
+/**
+ * Classes
+ */
+
+class Fish {
+    constructor(n, R, cx, cy, vx, vy) {
+        this.n = n;
+        this.R = R;
+        this.cx = cx;
+        this.cy = cy;
+        this.vx = vx;
+        this.vy = vy;
+
+        this.color = getRandomColor();
+        this.poly = getCircleVertices(n, R);
+    }
+
+    bounceX() { this.vx *= -1; }
+    bounceY() { this.vy *= -1; }
+}
 
 //==================================================================
 /**
