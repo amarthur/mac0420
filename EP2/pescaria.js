@@ -4,7 +4,7 @@ window.onload = main;
 // ==================================================================
 // Global Variables
 var ctx;
-var width, height;
+var velBar;
 
 var gFishes;
 
@@ -14,15 +14,15 @@ const MIN_FISH = 10;
 const MAX_FISH = 16;
 
 const MIN_FISH_POLY = 4;
-const MAX_FISH_POLY = 18;
+const MAX_FISH_POLY = 16;
 
-const MIN_FISH_SIZE = 10;
-const MAX_FISH_SIZE = 35;
+const MIN_FISH_SIZE = 0.02;
+const MAX_FISH_SIZE = 0.08;
 
-const MIN_FISH_X_VEL = 1;
-const MAX_FISH_X_VEL = 3;
-const MIN_FISH_Y_VEL = 1;
-const MAX_FISH_Y_VEL = 3;
+const MIN_FISH_X_VEL = 0.1;
+const MAX_FISH_X_VEL = 1;
+const MIN_FISH_Y_VEL = 0.1;
+const MAX_FISH_Y_VEL = 1;
 
 const NUM_FISH = getRandomInt(MIN_FISH, MAX_FISH);
 
@@ -56,12 +56,11 @@ class Fish {
  */
 function main() {
 
-    const canvas = document.getElementById('meucanvas');
+    const canvas = document.getElementById('canv');
     ctx = canvas.getContext('2d');
-    if (!ctx) alert("Não consegui abrir o contexto 2d :-( ");
+    if (!ctx) alert("Could not open context 2d.");
 
-    width = canvas.width;
-    height = canvas.height;
+    velBar = document.getElementById("velBar");
 
     initializeFish();
     drawFishes();
