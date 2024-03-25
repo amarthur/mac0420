@@ -41,7 +41,9 @@ class Fish {
         this.vy = vy;
 
         this.color = getRandomColor();
-        this.poly = getCircleVertices(n, R);
+
+        let randAlpha = Math.random() * 2 * Math.PI;
+        this.poly = getCircleVertices(n, R, randAlpha);
     }
 
     bounceX() { this.vx *= -1; }
@@ -101,11 +103,11 @@ function drawFish(fish) {
  * @param {number} R Radius of circumscribed circle
  * @returns
  */
-function getCircleVertices(n, R) {
+function getCircleVertices(n, R, alpha = 0) {
     let vertices = new Array(n);
 
     for (let i = 0; i < n; i++) {
-        let angle = (2 * Math.PI) / n * i;
+        let angle = ((2 * Math.PI) / n * i) + alpha;
         let x = Math.cos(angle) * R;
         let y = Math.sin(angle) * R;
         vertices[i] = [x, y];
