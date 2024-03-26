@@ -62,8 +62,16 @@ function main() {
 
     velBar = document.getElementById("velBar");
 
+    window.onresize = (() => resizeCanvas());
+    resizeCanvas();
     initializeFish();
     drawFishes();
+}
+
+function resizeCanvas(e) {
+    ctx.canvas.width = window.innerWidth;
+    ctx.canvas.height = window.innerHeight;
+    console.log("New Size (w, h): (" + ctx.canvas.width + ", " + ctx.canvas.height + ")");
 }
 
 function initializeFish() {
