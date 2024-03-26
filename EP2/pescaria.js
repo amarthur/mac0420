@@ -106,7 +106,6 @@ function drawFish(fish) {
 
     ctx.fillStyle = fish.color;
     ctx.fill(fishDrawing);
-
 }
 
 /**
@@ -133,17 +132,19 @@ function getCircleVertices(n, R, alpha = 0) {
  * @param {Fish} fish
  */
 function moveFish(fish) {
-    fish.cx += fish.vx;
-    fish.cy += fish.vy;
+    fish.cx += fish.vx * velBar.value;
+    fish.cy += fish.vy * velBar.value;
+    let fishRx = fish.R * ctx.canvas.width;
+    let fishRy = fish.R * ctx.canvas.height;
 
-    let outsideLeftBorder = (fish.cx <= fish.R);
-    let outsideRightBorder = (fish.cx + fish.R >= width);
-    let outsideTopBorder = (fish.cy <= fish.R);
-    let outsideBottomBorder = (fish.cy + fish.R >= height);
+    let touchedLeftBorder = (fish.cx < fishRx);
+    let touchedRightBorder = (fish.cx + fishRx > ctx.canvas.width);
+    let touchedTopBorder = (fish.cy < fishRy);
+    let touchedBottomBorder = (fish.cy + fishRy > ctx.canvas.height);
 
-    if (outsideLeftBorder || outsideRightBorder)
+    if (touchedLeftBorder || touchedRightBorder)
         fish.bounceX();
-    if (outsideTopBorder || outsideBottomBorder)
+    if (touchedTopBorder || touchedBottomBorder)
         fish.bounceY();
 
     ctx.save();
@@ -154,7 +155,7 @@ function moveFish(fish) {
 };
 
 function drawFishes() {
-    ctx.clearRect(0, 0, width, height);
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     for (const fish of gFishes)
         moveFish(fish);
     requestAnimationFrame(drawFishes);
