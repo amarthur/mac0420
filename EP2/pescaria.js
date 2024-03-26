@@ -19,10 +19,10 @@ const MAX_FISH_POLY = 16;
 const MIN_FISH_SIZE = 0.02;
 const MAX_FISH_SIZE = 0.08;
 
-const MIN_FISH_X_VEL = 0.1;
-const MAX_FISH_X_VEL = 1;
-const MIN_FISH_Y_VEL = 0.1;
-const MAX_FISH_Y_VEL = 1;
+const MIN_FISH_X_VEL = 0.5;
+const MAX_FISH_X_VEL = 2;
+const MIN_FISH_Y_VEL = 0.5;
+const MAX_FISH_Y_VEL = 2;
 
 const NUM_FISH = getRandomInt(MIN_FISH, MAX_FISH);
 
@@ -41,9 +41,8 @@ class Fish {
         this.vy = vy;
 
         this.color = getRandomColor();
-
-        let randAlpha = Math.random() * 2 * Math.PI;
-        this.poly = getCircleVertices(n, R, randAlpha);
+        this.alpha = Math.random() * 2 * Math.PI;
+        this.poly = getCircleVertices(n, R, this.alpha);
     }
 
     bounceX() { this.vx *= -1; }
