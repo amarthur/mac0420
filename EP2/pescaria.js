@@ -77,13 +77,18 @@ function resizeCanvas(e) {
 function initializeFish() {
     gFishes = new Array(NUM_FISH);
 
+    const directionCoef = () => Math.random() < 0.5 ? 1 : -1;
+
     for (let i = 0; i < NUM_FISH; i++) {
         let n = getRandomInt(MIN_FISH_POLY, MAX_FISH_POLY);
         let R = getRandomInt(MIN_FISH_SIZE, MAX_FISH_SIZE);
-        let cx = getRandomInt(R, width - R);
-        let cy = getRandomInt(R, height - R);
-        let vx = getRandomInt(MIN_FISH_X_VEL, MAX_FISH_X_VEL);
-        let vy = getRandomInt(MIN_FISH_Y_VEL, MAX_FISH_Y_VEL);
+
+        let fishRx = R * ctx.canvas.width;
+        let fishRy = R * ctx.canvas.height;
+        let cx = getRandomInt(fishRx, ctx.canvas.width - fishRx);
+        let cy = getRandomInt(fishRy, ctx.canvas.height - fishRy);
+        let vx = directionCoef() * getRandomInt(MIN_FISH_X_VEL, MAX_FISH_X_VEL);
+        let vy = directionCoef() * getRandomInt(MIN_FISH_Y_VEL, MAX_FISH_Y_VEL);
 
         gFishes[i] = new Fish(n, R, cx, cy, vx, vy);
     }
@@ -143,6 +148,7 @@ function moveFish(fish) {
 
     ctx.save();
     ctx.translate(fish.cx, fish.cy);
+    ctx.scale(ctx.canvas.width, ctx.canvas.height);
     drawFish(fish);
     ctx.restore();
 };
